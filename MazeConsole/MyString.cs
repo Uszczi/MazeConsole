@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MazeConsole;
+
 public static class MyString
 {
     public static string Multiply(this string source, int multiplier)
@@ -16,6 +17,5 @@ public static class MyString
         }
 
         return sb.ToString();
-
     }
 }

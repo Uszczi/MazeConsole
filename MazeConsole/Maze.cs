@@ -1,12 +1,12 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace MazeConsole;
 
@@ -18,7 +18,8 @@ public class Cell
     public int col;
     public bool visited;
 
-    public Cell() {
+    public Cell()
+    {
         neighbours = new List<Cell>();
         wall_neighbours = new List<Cell>();
     }
@@ -49,7 +50,6 @@ public class RandomizedDepthFirstSearch
             }
             if (possible_neig.Count > 0)
             {
-                
                 Random random = new Random();
                 int index = random.Next(possible_neig.Count);
                 Cell randomNeig = possible_neig[index];
@@ -74,8 +74,8 @@ public class Maze
     public int cols;
     public Cell[,] cells;
 
-
-    public Maze(int rows, int cols) { 
+    public Maze(int rows, int cols)
+    {
         this.rows = rows;
         this.cols = cols;
 
@@ -83,9 +83,10 @@ public class Maze
 
         for (int i = 0; i < rows; i++)
         {
-            for (int j = 0; j < cols; j++) { 
-                Cell cell = new Cell { row=i, col=j };
-                cells[i,j] = cell;
+            for (int j = 0; j < cols; j++)
+            {
+                Cell cell = new Cell { row = i, col = j };
+                cells[i, j] = cell;
             }
         }
 
@@ -99,64 +100,62 @@ public class Maze
                 // Right and left neigbours
                 if (j < last_col)
                 {
-     
-                  cells[i, j].wall_neighbours.Add(cells[i, j+1]);
-                  cells[i, j + 1].wall_neighbours.Add(cells[i, j]);
+                    cells[i, j].wall_neighbours.Add(cells[i, j + 1]);
+                    cells[i, j + 1].wall_neighbours.Add(cells[i, j]);
                 }
 
                 // Bottom and top
                 if (i < last_row)
-                {                  
-                      cells[i, j].wall_neighbours.Add(cells[i+1,j]);
-                      cells[i+1, j].wall_neighbours.Add(cells[i, j]);
+                {
+                    cells[i, j].wall_neighbours.Add(cells[i + 1, j]);
+                    cells[i + 1, j].wall_neighbours.Add(cells[i, j]);
                 }
             }
         }
-
     }
-    
+
     public void Display()
     {
         Console.WriteLine("---Maze---");
         Console.WriteLine($"Rows: {rows} Columns: {cols}");
 
         string horizontal_line = "#";
-        for (int i = 0; i < cols; i++) {
+        for (int i = 0; i < cols; i++)
+        {
             horizontal_line += "###";
         }
         Console.WriteLine(horizontal_line);
-        
-        for (int i = 0; i < rows; i++) {
+
+        for (int i = 0; i < rows; i++)
+        {
             string line = "#";
-            for (int j = 0; j < cols; j++) {
+            for (int j = 0; j < cols; j++)
+            {
                 Cell cell = cells[i, j];
 
                 bool has_right_neigbour = false;
-                foreach (Cell neib in cell.neighbours) 
-                { 
-                        if (neib.col > cell.col && neib.row == cell.row)
-                        {
-                            has_right_neigbour = true;
-                        }
+                foreach (Cell neib in cell.neighbours)
+                {
+                    if (neib.col > cell.col && neib.row == cell.row)
+                    {
+                        has_right_neigbour = true;
+                    }
                 }
 
-                if ( has_right_neigbour)
+                if (has_right_neigbour)
                 {
-
                     line += $"   ";
-                }else
+                }
+                else
                 {
-
                     line += $"  #";
                 }
-
             }
             Console.WriteLine(line);
 
-            if (i < rows -1)
+            if (i < rows - 1)
             {
                 line = "#";
-      
 
                 for (int j = 0; j < cols; j++)
                 {
@@ -172,23 +171,17 @@ public class Maze
 
                     if (has_bottom_neigbour)
                     {
-
                         line += $"  #";
                     }
                     else
                     {
-
                         line += $"###";
                     }
                 }
                 Console.WriteLine(line);
             }
-
-
         }
 
         Console.WriteLine(horizontal_line);
-
     }
-    }
-
+}
