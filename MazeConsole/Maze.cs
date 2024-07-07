@@ -1,29 +1,78 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MazeConsole;
 
 public class Cell
 {
-    public List<Cell> neigbours;
+    public List<Cell> neighbours;
+    public List<Cell> wall_neighbours;
     public int row;
     public int col;
+    public bool visited;
 
-    public Cell() { 
-        neigbours = new List<Cell>();
+    public Cell() {
+        neighbours = new List<Cell>();
+        wall_neighbours = new List<Cell>();
     }
+}
 
+public class RandomizedDepthFirstSearch
+{
+    public static void Generate(Maze maze)
+    {
+        Cell startCell = maze.cells[0, 0];
+        startCell.visited = true;
+
+        Stack<Cell> stack = new Stack<Cell>();
+
+        stack.Push(startCell);
+
+        while (stack.Count > 0)
+        {
+            Cell current_cell = stack.Pop();
+
+            List<Cell> possible_neig = new List<Cell>();
+            foreach (Cell neig in current_cell.wall_neighbours)
+            {
+                if (!neig.visited)
+                {
+                    possible_neig.Add(neig);
+                }
+            }
+            if (possible_neig.Count > 0)
+            {
+                
+                Random random = new Random();
+                int index = random.Next(possible_neig.Count);
+                Cell randomNeig = possible_neig[index];
+
+                current_cell.wall_neighbours.Remove(randomNeig);
+                current_cell.neighbours.Add(randomNeig);
+
+                randomNeig.wall_neighbours.Remove(current_cell);
+                randomNeig.neighbours.Add(current_cell);
+
+                randomNeig.visited = true;
+                stack.Push(current_cell);
+                stack.Push(randomNeig);
+            }
+        }
+    }
 }
 
 public class Maze
 {
     public int rows;
     public int cols;
-    private Cell[,] cells;
+    public Cell[,] cells;
 
 
     public Maze(int rows, int cols) { 
@@ -51,15 +100,15 @@ public class Maze
                 if (j < last_col)
                 {
      
-                  cells[i, j].neigbours.Add(cells[i, j+1]);
-                  cells[i, j + 1].neigbours.Add(cells[i, j]);
+                  cells[i, j].wall_neighbours.Add(cells[i, j+1]);
+                  cells[i, j + 1].wall_neighbours.Add(cells[i, j]);
                 }
 
                 // Bottom and top
                 if (i < last_row)
                 {                  
-                      cells[i, j].neigbours.Add(cells[i+1,j]);
-                      cells[i+1, j].neigbours.Add(cells[i, j]);
+                      cells[i, j].wall_neighbours.Add(cells[i+1,j]);
+                      cells[i+1, j].wall_neighbours.Add(cells[i, j]);
                 }
             }
         }
@@ -83,7 +132,7 @@ public class Maze
                 Cell cell = cells[i, j];
 
                 bool has_right_neigbour = false;
-                foreach (Cell neib in cell.neigbours) 
+                foreach (Cell neib in cell.neighbours) 
                 { 
                         if (neib.col > cell.col && neib.row == cell.row)
                         {
@@ -113,7 +162,7 @@ public class Maze
                 {
                     Cell cell = cells[i, j];
                     bool has_bottom_neigbour = false;
-                    foreach (Cell neib in cell.neigbours)
+                    foreach (Cell neib in cell.neighbours)
                     {
                         if (neib.col == cell.col && neib.row > cell.row)
                         {
